@@ -3,33 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PlayerRequest;
-use App\Services\ProductService;
+use App\Repositories\IPlayerRepository;
+
 class CRUDController extends Controller
 {
-    protected $productService;
-    public function __construct(ProductService $productService)
-    {
-        $this->productService = $productService;
-    }
-
     public function getAllPlayers()
     {
-        return response()->json($this->productService->getAll());
+        $playerRepository = app(IPlayerRepository::class);
+
+        return response()->json($playerRepository->getAllPlayers());
     }
+
     public function getPlayerById($id)
     {
-        return response()->json($this->productService->getById($id));
+        $playerRepository = app(IPlayerRepository::class);
+
+        return response()->json($playerRepository->getPlayerById($id));
     }
+
     public function newPlayer(PlayerRequest $request)
     {
-        return response()->json($this->productService->create($request->validated()));
+        $playerRepository = app(IPlayerRepository::class);
+
+        return response()->json($playerRepository->createPlayer($request->validated()));
     }
+
     public function updatePlayer(PlayerRequest $request, $id)
     {
-        return response()->json($this->productService->update($request->validated(),$id));
+        $playerRepository = app(IPlayerRepository::class);
+
+        return response()->json($playerRepository->updatePlayer($id, $request->validated()));
     }
+
     public function deletePlayer($id)
     {
-        return response()->json($this->productService->delete($id));
+        $playerRepository = app(IPlayerRepository::class);
+
+        return response()->json($playerRepository->deletePlayer($id));
     }
 }

@@ -1,7 +1,7 @@
 <?php
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\CRUDController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/players', [CRUDController::class, 'getAllPlayers']);
 Route::get('/players/{id}', [CRUDController::class, 'getPlayerById']);

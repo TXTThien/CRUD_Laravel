@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Player;
-class ProductService {
+
+class ProductService
+{
     public function getAll()
     {
         return Player::all();
@@ -23,6 +25,7 @@ class ProductService {
     {
         $playerUpdate = Player::findOrFail($id);
         $playerUpdate->update($data);
+
         return $playerUpdate;
     }
 
