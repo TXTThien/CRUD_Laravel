@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Player;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,12 +25,14 @@ class PlayerCacheRepository implements IPlayerRepository
 
     public function getAllPlayers()
     {
-        return $this->cache->remember('all_players', 60 * 60 * 12, function () {
+        $key = config('cache_keys.player.all');
+
+        return $this->cache->remember($key, 60 * 60 * 12, function () {
             return $this->playerRepository->getAllPlayers();
         });
     }
 
-    public function getPlayerById($id)
+    public function getPlayerById($id): Player
     {
         $key = $this->getKey($id);
 
@@ -38,31 +41,22 @@ class PlayerCacheRepository implements IPlayerRepository
         });
     }
 
-    public function createPlayer(array $data)
-    {
-        $player = $this->playerRepository->createPlayer($data);
-        $this->cache->put($this->getKey($player->uuid), $player, 60 * 60 * 12);
-
-        $this->cache->forget('all_players');
-
-        return $player;
-    }
-
-    public function updatePlayer($id, array $data)
-    {
-        $player = $this->playerRepository->updatePlayer($id, $data);
-        $this->cache->put($this->getKey($id), $player, 60 * 60 * 12);
-
-        $this->cache->forget('all_players');
-
-        return $player;
-    }
-
     public function deletePlayer($id): void
     {
+
         $this->playerRepository->deletePlayer($id);
         $this->cache->forget($this->getKey($id));
 
+        $this->cache->forget(config('cache_keys.player.all'));
+    }
+
+    public function save(Player $player): Player
+    {
+        $saved = $this->playerRepository->save($player);
+        $key = $this->getKey($player->uuid);
+        $this->cache->put($key, $saved, 60 * 60 * 12);
         $this->cache->forget('all_players');
+
+        return $saved;
     }
 }

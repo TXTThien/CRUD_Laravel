@@ -14,7 +14,6 @@ class PlayerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid' => 'required|string',
             'organization_id' => 'required|integer',
             'game_customize_revision_id' => 'required|integer',
             'name' => 'nullable|string',
